@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using TMPro;
 using Unity.Cinemachine;
@@ -35,7 +36,6 @@ public class Player : MonoBehaviour
             lazer.SetActive(false);
         }
     }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("EnergyDrink"))
@@ -68,16 +68,25 @@ public class Player : MonoBehaviour
         }
 
         _height = _charController.bounds.size.y;
+    }
 
-    }
-    
-    private void OnDrawGizmos()
+    private void OnControllerColliderHit (ControllerColliderHit hit)
     {
-     
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(_charController.bounds.center, _charController.bounds.size);
-        //DrawCube(building.bounds.center, building.bounds.size);
+        if (hit.collider.CompareTag("Destructible"))
+        {
+            MeshDestroy meshDestroy = hit.gameObject.GetComponent<MeshDestroy>();
+            if (Height > meshDestroy._buildingHeight)
+            {
+                meshDestroy.DestroyMesh();
+                
+                //My original Building Destruction Code:
+                //Destroy(hit.gameObject);
+                //GameObject instance = Instantiate(building._destroyedVersion, hit.transform.position, Quaternion.identity);
+                //GameBehavior.Instance.Score((int)building.score);
+            }
+        }
     }
+
     public int Score
     {
         get => _score;

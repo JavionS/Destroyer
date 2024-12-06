@@ -7,10 +7,10 @@ using UnityEngine.Rendering;
 
 public class Buildings : MonoBehaviour
 {
-    [SerializeField] private float _buildingHeight;
-    [SerializeField] private GameObject _destroyedVersion;
-
-    private float _score;
+    public float _buildingHeight;
+    public GameObject _destroyedVersion;
+    public float score;
+    
     private BoxCollider building;
     // [SerializeField] private Dictionary<Collider, float> _buildingHeights = new();
     void Start()
@@ -18,37 +18,37 @@ public class Buildings : MonoBehaviour
         building = GetComponent<BoxCollider>();
         string objectName = gameObject.name;
         _buildingHeight = building.bounds.size.y;
-        Debug.Log("Total height of " + objectName + " is " + _buildingHeight);
-        _score = _buildingHeight * 10;
+        //Debug.Log("Total height of " + objectName + " is " + _buildingHeight);
+        score = _buildingHeight * 10;
     }
     
     
-    private void OnTriggerEnter(Collider other)
-    {
-        Debug.Log(other.gameObject.name);
-        if (other.CompareTag("Player"))
-        {
-            Player player = other.gameObject.GetComponent<Player>();
-            if (player.Height > _buildingHeight)
-            {
-                Destroy(gameObject);
-                GameObject instance = Instantiate(_destroyedVersion, transform.position, Quaternion.identity);
-                GameBehavior.Instance.Score((int)_score);
-            }
-            else
-            {
-                Debug.Log("Player is too short to destroy the building.");
-            }
-        }
-
-        if (other.CompareTag("Projectile"))
-        {
-            Destroy(gameObject);
-            GameObject instance = Instantiate(_destroyedVersion, transform.position, Quaternion.identity);
-            GameBehavior.Instance.Score((int)_score);
-        }
-    }
-    
+    // private void OnTriggerEnter(Collider other)
+    // {
+    //     Debug.Log(other.gameObject.name);
+    //     if (other.CompareTag("Player"))
+    //     {
+    //         Player player = other.gameObject.GetComponent<Player>();
+    //         if (player.Height > _buildingHeight)
+    //         {
+    //             Destroy(gameObject);
+    //             GameObject instance = Instantiate(_destroyedVersion, transform.position, Quaternion.identity);
+    //             GameBehavior.Instance.Score((int)_score);
+    //         }
+    //         else
+    //         {
+    //             
+    //         }
+    //     }
+    //
+    //     if (other.CompareTag("Projectile"))
+    //     {
+    //         Destroy(gameObject);
+    //         GameObject instance = Instantiate(_destroyedVersion, transform.position * 1.2f, Quaternion.identity);
+    //         GameBehavior.Instance.Score((int)_score);
+    //     }
+    // }
+    //
 
     private void OnDrawGizmos()
     {

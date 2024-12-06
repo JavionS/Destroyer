@@ -8,11 +8,12 @@ TagManager:
   - Projectile
   - Fruit
   - EnergyDrink
+  - Destructible
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Buildings
   - Water
   - UI
   - 
