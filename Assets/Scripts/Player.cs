@@ -1,4 +1,5 @@
 using System;
+using Sample;
 using UnityEngine;
 using TMPro;
 using Unity.Cinemachine;
@@ -15,12 +16,13 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject _laserPrefab;
     [SerializeField] private Transform _eyePositionL;
     [SerializeField] private Transform _eyePositionR;
-    [SerializeField] private GameObject[] Lazers = new GameObject[2];
+    
     
     [SerializeField] private TextMeshProUGUI _scoreGUI;
     [SerializeField] private TextMeshProUGUI _EnergyGUI;
     
     private CharacterController _charController;
+    
     private void Start()
     {
         _charController = GetComponent<CharacterController>();
@@ -29,12 +31,8 @@ public class Player : MonoBehaviour
 
         _height = GameBehavior.Instance.InitialHeight;
         
-        Lazers[0] = Instantiate(_laserPrefab, _eyePositionL) as GameObject;
-        Lazers[1] = Instantiate(_laserPrefab, _eyePositionR) as GameObject;
-        foreach (var lazer in Lazers)
-        {
-            lazer.SetActive(false);
-        }
+        _EnergyGUI.text = "Energy : " + _energy + " / " + _maxEnergy;
+        
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -45,28 +43,19 @@ public class Player : MonoBehaviour
                 Energy += 1;
             }
         }
+        if (other.CompareTag("Ghost"))
+        {
+            GhostScript ghost = other.GetComponent<GhostScript>();
+            if (ghost._isAlive)
+            {
+                GameBehavior.Instance.Lose();
+            }
+            
+        }
     }
     
     private void Update()
     {
-        if (GameBehavior.Instance.isAlive && GameBehavior.Instance.LaserEye)
-        {
-            if (GameBehavior.Instance.hasEnoughEnergy)
-            {
-                foreach (var lazer in Lazers)
-                {
-                    lazer.SetActive(true);
-                }
-            }
-        }
-        else
-        {
-            foreach (var lazer in Lazers)
-            {
-                lazer.SetActive(false);
-            }
-        }
-
         _height = _charController.bounds.size.y;
     }
 
@@ -78,6 +67,7 @@ public class Player : MonoBehaviour
             if (Height > meshDestroy._buildingHeight)
             {
                 meshDestroy.DestroyMesh();
+                GameBehavior.Instance.Score(meshDestroy.score);
                 
                 //My original Building Destruction Code:
                 //Destroy(hit.gameObject);
@@ -93,7 +83,7 @@ public class Player : MonoBehaviour
         set
         {
             _score = value;
-            _scoreGUI.text =  _score.ToString();
+            _scoreGUI.text =  _score + " / " + GameBehavior.Instance.MaxScore;
         }
     }
     

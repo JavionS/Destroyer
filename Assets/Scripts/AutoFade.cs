@@ -42,10 +42,10 @@ public class AutoFade : MonoBehaviour
         rb.isKinematic = true;
         _collider.isTrigger = true;
         
-        yield return new WaitForSeconds(8f);
+        yield return new WaitForSeconds(3f);
         
         _fading = true;
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(8f);
         Destroy(gameObject);
         _fading = false;
     }
@@ -58,7 +58,7 @@ public class AutoFade : MonoBehaviour
         
         // meshRenderer.material = _blackMaterial;
         
-        yield return new WaitForSeconds(0.4f); // Wait for 0.2 seconds
+        yield return new WaitForSeconds(0.4f); // Wait for 0.4 seconds
 
         _flashing = false;
     }

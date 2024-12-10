@@ -31,7 +31,7 @@ public class MeshDestroy : MonoBehaviour
     public float ExplodeForce = 3;
 
     public float _buildingHeight;
-    public float score;
+    [SerializeField]public int score;
     
     private MeshCollider building;
     
@@ -42,7 +42,7 @@ public class MeshDestroy : MonoBehaviour
         string objectName = gameObject.name;
         _buildingHeight = building.bounds.size.y;
         //Debug.Log("Total height of " + objectName + " is " + _buildingHeight);
-        score = _buildingHeight * 10;
+        score = (int)(_buildingHeight * 10);
     }
 
     // Update is called once per frame
@@ -50,7 +50,7 @@ public class MeshDestroy : MonoBehaviour
     {
         
     }
-
+    
     public void DestroyMesh()
     {
         var originalMesh = GetComponent<MeshFilter>().mesh;

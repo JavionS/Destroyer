@@ -9,6 +9,7 @@ TagManager:
   - Fruit
   - EnergyDrink
   - Destructible
+  - Ghost
   layers:
   - Default
   - TransparentFX
@@ -16,9 +17,9 @@ TagManager:
   - Buildings
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Player
+  - Ghost
+  - Wall
   - 
   - 
   - 

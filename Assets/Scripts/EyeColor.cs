@@ -16,7 +16,16 @@ public class EyeColor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
+        {
+            meshRenderer.material = _lazerEye;
+        }
+        else
+        {
+            meshRenderer.material = _normalEye;
+        }
+
+        if (GameBehavior.Instance.LaserEye)
         {
             StartCoroutine(Attack());
         }

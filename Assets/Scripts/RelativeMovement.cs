@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using Unity.Cinemachine;
+using UnityEngine.VFX;
 public class RelativeMovement : MonoBehaviour
 {
     [SerializeField] Transform _target;
@@ -14,7 +15,7 @@ public class RelativeMovement : MonoBehaviour
     [SerializeField] float _minFall = -4f;
     
     [SerializeField] private LayerMask _buildingLayer;
-    [SerializeField] private float _rayDistance = 1.0f;
+    //[SerializeField] private float _rayDistance = 1.0f;
     
     float _vertSpeed;
     float _groundCheckDistance;
@@ -28,9 +29,18 @@ public class RelativeMovement : MonoBehaviour
     private Quaternion _lockedRotation;
     private bool _attack;
     
+    [SerializeField] private VisualEffect _vfxDetect;
+    [SerializeField] private VisualEffect[] _vfxHits = new VisualEffect[2];
+    private float _detectSize = 0.1f;
+    private float _hitSize = 0.15f;
+    
+    private AudioSource _audio;
+    
+    
     [SerializeField] private CinemachineOrbitalFollow _cinemachineOrbital;
     void Start()
     {
+        _audio = GetComponent<AudioSource>();
         Rigidbody rb = gameObject.AddComponent<Rigidbody>();
         rb.isKinematic = true;
         
@@ -45,6 +55,13 @@ public class RelativeMovement : MonoBehaviour
         _groundCheckDistance =
             (_charController.height + _charController.radius) /
             _charController.height * 0.1f;
+        
+        _vfxDetect.SetFloat("Size", _detectSize);
+        foreach (var lazer in _vfxHits)
+        {
+            lazer.SetFloat("Size", _hitSize);
+        }
+        
     }
 
     // Update is called once per frame
@@ -126,33 +143,7 @@ public class RelativeMovement : MonoBehaviour
         
         
     }
-    // private bool IsObstacleAhead(Vector3 direction)
-    // {
-    //     // 计算角色的起始位置和半径
-    //     Vector3 start = transform.position + Vector3.up * (_charController.height / 2);
-    //     float radius = _charController.radius;
-    //
-    //     // 从角色中心发射射线
-    //     if (Physics.Raycast(start, direction, out RaycastHit hit, _rayDistance, _buildingLayer))
-    //     {
-    //         Debug.DrawLine(start, hit.point, Color.red); // 可视化射线
-    //         return true; // 检测到障碍物
-    //     }
-    //
-    //     // 从左右边缘发射射线（拓宽检测范围）
-    //     Vector3 leftStart = start - transform.right * radius;
-    //     Vector3 rightStart = start + transform.right * radius;
-    //
-    //     if (Physics.Raycast(leftStart, direction, out hit, _rayDistance, _buildingLayer) ||
-    //         Physics.Raycast(rightStart, direction, out hit, _rayDistance, _buildingLayer))
-    //     {
-    //         Debug.DrawLine(leftStart, hit.point, Color.red); // 可视化左侧射线
-    //         Debug.DrawLine(rightStart, hit.point, Color.red); // 可视化右侧射线
-    //         return true; // 检测到障碍物
-    //     }
-    //
-    //     return false; // 没有障碍物
-    // }
+
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         _contact = hit;
@@ -161,18 +152,30 @@ public class RelativeMovement : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag("EnergyDrink"))
+        {
+            DrinkBehavior drink = other.gameObject.GetComponent<DrinkBehavior>();
+            _moveSpeed += drink.Speed();
+            _jumpSpeed += drink.jumpSpeed();
+            
+            _audio.PlayOneShot(drink.EatSound());
+            
+            Destroy(other.gameObject);
+        }
         if (other.CompareTag("Fruit"))
         {
+            FoodBehavior food = other.gameObject.GetComponent<FoodBehavior>();
+            // Destroy(other.gameObject);
             float maxScale = (Vector3.one * 20f).magnitude;
             Debug.Log(maxScale);
-            Debug.Log(transform.localScale.magnitude);
             if (transform.localScale.magnitude < maxScale)
             {
+                Debug.Log(transform.localScale.magnitude);
                 //Scale
                 transform.localScale += Vector3.one * 0.3f;
 
-                _moveSpeed += 0.28f;
-                _jumpSpeed += 0.15f;
+                _moveSpeed += food.Speed();
+                _jumpSpeed += food.jumpSpeed();
                 
                 //Camera
                 _cinemachineOrbital.Radius += 0.8f;
@@ -183,7 +186,19 @@ public class RelativeMovement : MonoBehaviour
                     _charController.height / 2f,
                     _charController.center.z);
                 
+                //vfx
+                _detectSize += 0.02f;
+                _hitSize += 0.02f;
+                _vfxDetect.SetFloat("Size", _detectSize);
+                foreach (var lazer in _vfxHits)
+                {
+                    lazer.SetFloat("Size", _hitSize);
+                }
                 
+                //Audio
+                _audio.PlayOneShot(food.EatSound());
+                
+                Destroy(other.gameObject);
             }
             
 
