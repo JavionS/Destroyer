@@ -50,7 +50,7 @@ namespace Sample
                         transform.Rotate(0, theta, 0);
                     }
 
-                    _changeTime = Random.Range(2f, 18f);
+                    _changeTime = Random.Range(2f, 12f);
                     timer = 0f;
                 }
                 

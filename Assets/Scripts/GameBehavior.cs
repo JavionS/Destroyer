@@ -67,6 +67,7 @@ public class GameBehavior : MonoBehaviour
         player.Energy = 0;
         
         Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         
         _audio = GetComponent<AudioSource>();
     }
@@ -114,11 +115,11 @@ public class GameBehavior : MonoBehaviour
             
         }
         
-        if (GameObject.FindGameObjectsWithTag("Ghost").Length <= 3)
+        if (GameObject.FindGameObjectsWithTag("Ghost").Length <= 10)
         {
             timer += Time.deltaTime;
             
-            if (timer >= 30f)
+            if (timer >= 10f)
             {
                 Vector3 randomPosition = new Vector3(
                     Random.Range(1f, 238f),
@@ -187,6 +188,7 @@ public class GameBehavior : MonoBehaviour
             _restartButton.SetActive(true);
             Time.timeScale = 0; 
             Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
         else
         {
@@ -195,6 +197,7 @@ public class GameBehavior : MonoBehaviour
             _restartButton.SetActive(false);
             Time.timeScale = 1; 
             Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
         }
     }
     
@@ -204,6 +207,7 @@ public class GameBehavior : MonoBehaviour
         State = Utilities.GameplayState.Gameover;
         _restartButton.SetActive(true);
         Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
     
     public void Restart()
